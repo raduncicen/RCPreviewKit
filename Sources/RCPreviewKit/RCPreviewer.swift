@@ -114,8 +114,8 @@ public struct RCPreviewer: UIViewControllerRepresentable {
     /// - Example:
     /// ```swift
     /// #Preview {
-    ///     RottaPreviewer { navigationController, asyncPerformer, viewFactory in
-    ///         asyncPerformer.perform(.detached(operation: {
+    ///     RottaPreviewer { navigationController, asyncExecutor, viewFactory in
+    ///         asyncExecutor.perform(.detached(operation: {
     ///             let someService = MyService()
     ///             let response = try await someService.fetchData()
     ///             return response

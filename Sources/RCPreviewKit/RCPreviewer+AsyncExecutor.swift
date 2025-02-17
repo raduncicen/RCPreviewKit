@@ -5,7 +5,7 @@
 //  Created by Radun Çiçen on 15.02.2025.
 //
 
-import Foundation
+import UIKit
 
 extension RCPreviewer {
 
@@ -13,11 +13,35 @@ extension RCPreviewer {
     /// This is useful when bridging Swift Concurrency with blocking operations.
     public final class AsyncExecutor {
 
+        public func execute<T>(_ task: Task<T,Error>, successVC: (T) -> UIViewController, errorVC: (Error) -> UIViewController) -> UIViewController {
+            let semaphore = DispatchSemaphore(value: 0)
+            var result: Result<T, Error>?
+            Task {
+                do {
+                    let response = try await task.value
+                    result = .success(response)
+                } catch {
+                    result = .failure(error)
+                }
+                semaphore.signal()
+            }
+            semaphore.wait()
+            guard let result else {
+                fatalError("This case should never happen")
+            }
+
+            switch result {
+            case .success(let response):
+                return successVC(response)
+            case .failure(let error):
+                return errorVC(error)
+            }
+        }
         /// Executes an async `Task` and returns the result synchronously.
         ///
         /// - Parameter task: A `Task` that produces a result.
         /// - Returns: The computed result.
-        public func executeSync<T>(_ task: Task<T, Never>) -> T {
+        public func execute<T>(_ task: Task<T, Never>) -> T {
             let semaphore = DispatchSemaphore(value: 0)
             var response: T?
             Task {
