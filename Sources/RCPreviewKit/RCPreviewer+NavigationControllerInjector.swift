@@ -10,13 +10,12 @@ import UIKit
 
 extension RCPreviewer {
     public final class NavigationControllerInjector {
-        /// Shared instance to allow global access.
+
         nonisolated(unsafe) public static let shared = NavigationControllerInjector()
-        
-        /// Stored reference to the navigation controller.
+
         private var navigationControllerProvider: (() -> UINavigationController)?
         
-        private init() {} // Prevent instantiation
+        private init() {}
         
         /// Allows developers to inject a navigation controller factory.
         public func setNavigationController(provider: @escaping () -> UINavigationController) {
